@@ -1,7 +1,19 @@
 import React from "react";
 import FESLogo from "./assets/FES-Logo.png";
 
-function Navbar({ user, email, password, setEmail, setPassword, login, register, buttonLoading, logout, toggleDropdown, dropdownVisible }) {
+function Navbar({
+  user,
+  email,
+  password,
+  setEmail,
+  setPassword,
+  login,
+  register,
+  buttonLoading,
+  logout,
+  toggleDropdown,
+  dropdownVisible,
+}) {
   return (
     <nav className="nav__bar">
       <img
@@ -9,9 +21,10 @@ function Navbar({ user, email, password, setEmail, setPassword, login, register,
         className="logo__img"
         alt="FES Logo"
         onError={(e) => {
-          e.target.src = "/path/to/fallback-image.png"; 
+          e.target.src = "/path/to/fallback-image.png"; // Ensure this path is valid
         }}
       />
+
       {!user ? (
         <div className="nav__buttons">
           <button
@@ -21,34 +34,43 @@ function Navbar({ user, email, password, setEmail, setPassword, login, register,
             disabled={buttonLoading}
           >
             {buttonLoading ? (
-              <>
-                <div className="spinner"></div>
-              <div className="skeleton__links"> 
-              <div className="skeleton__login"></div>
-              <div className="skeleton__register"></div>
-              </div>
-              </>
-            ) : "Login"}
+              <div className="spinner"></div>
+            ) : (
+              "Login"
+            )}
           </button>
 
           {!buttonLoading && (
-            <button className="nav__register btnR" onClick={register} aria-label="Register">
+            <button
+              className="nav__register btnR"
+              onClick={register}
+              aria-label="Register"
+            >
               Register
             </button>
           )}
         </div>
       ) : (
-        <>
-             <button className="initial__btn" onClick={toggleDropdown}>
+        <div className="user__dropdown">
+          <button
+            className="initial__btn"
+            onClick={toggleDropdown}
+            aria-expanded={dropdownVisible}
+            aria-controls="dropdown-menu"
+          >
             {user.email[0].toUpperCase()}
           </button>
           {dropdownVisible && (
-            <div className="dropdown-menu show ">
-              <button  onClick={logout}>Logout</button>
-              
+            <div
+              id="dropdown-menu"
+              className={`dropdown-menu ${dropdownVisible ? "show" : ""}`}
+            >
+              <button onClick={logout} aria-label="Logout">
+                Logout
+              </button>
             </div>
           )}
-        </>
+        </div>
       )}
     </nav>
   );

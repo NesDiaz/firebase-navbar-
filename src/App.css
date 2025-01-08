@@ -174,11 +174,6 @@ nav {
   z-index: 10;
 }
 
-.dropdown-menu.show {
-  display: block; 
-}
-
-
 .dropdown-menu button{
   background: none;
   border: none;
@@ -187,5 +182,9 @@ nav {
   cursor: pointer;
   padding: 6px;
   text-align: left;
+}
+
+.dropdown-menu.show {
+  display: block; 
 }
 

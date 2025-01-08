@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 import { auth } from "./firebase/init";
 import {
@@ -10,23 +10,41 @@ import {
 import Navbar from "./navbar";
 
 function App() {
-  const [user, setUser] = React.useState(null);
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [buttonLoading, setButtonLoading] = React.useState(false);
-  const [showRegisterForm, setShowRegisterForm] = React.useState(false); 
-  const [dropdownVisible, setDropdownVisible] = React.useState(false);
+  const [user, setUser] = useState(null);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [buttonLoading, setButtonLoading] = useState(false);
+  const [showRegisterForm, setShowRegisterForm] = useState(false);
+  const [dropdownVisible, setDropdownVisible] = useState(false);
 
-  React.useEffect(() => {
+  
+  useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser || null);
     });
-    return () => unsubscribe(); 
+    return () => unsubscribe();
+  }, []);
+
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        !event.target.closest(".initial__btn") &&
+        !event.target.closest(".dropdown-menu")
+      ) {
+        setDropdownVisible(false);
+      }
+    }
+
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
   }, []);
 
   function register() {
-    console.log('Registering...');
-    createUserWithEmailAndPassword(auth, 'test123@email.com', 'test123')
+    console.log("Registering...");
+    createUserWithEmailAndPassword(auth, "test123@email.com", "test123")
       .then((userCredential) => {
         console.log("User registered:", userCredential.user);
       })
@@ -36,10 +54,10 @@ function App() {
   }
 
   function login() {
-    console.log('Logging in...');
-    setButtonLoading(true); 
+    console.log("Logging in...");
+    setButtonLoading(true);
     setTimeout(() => {
-      signInWithEmailAndPassword(auth, 'test123@email.com', 'test123')
+      signInWithEmailAndPassword(auth, "test123@email.com", "test123")
         .then(({ user }) => {
           console.log("User logged in:", user);
           setUser(user);
@@ -48,22 +66,21 @@ function App() {
           console.error("Login error:", error.message);
         })
         .finally(() => {
-          setButtonLoading(false); 
+          setButtonLoading(false);
         });
-    }, 1000); 
+    }, 1000);
   }
 
   function toggleDropdown() {
-    setDropdownVisible(prevState => !prevState); 
+    setDropdownVisible((prevState) => !prevState);
   }
-  
 
   function logout() {
-    console.log('Logging out...');
-    signOut(auth).then(() => setUser(null)).catch((error) => console.error("Logout error:", error.message));
+    console.log("Logging out...");
+    signOut(auth)
+      .then(() => setUser(null))
+      .catch((error) => console.error("Logout error:", error.message));
   }
-
-
 
   return (
     <div className="App">
@@ -75,7 +92,7 @@ function App() {
         setPassword={setPassword}
         login={login}
         register={register}
-        setShowRegisterForm={() => setShowRegisterForm(true)} 
+        setShowRegisterForm={() => setShowRegisterForm(true)}
         logout={logout}
         buttonLoading={buttonLoading}
         toggleDropdown={toggleDropdown}
@@ -86,12 +103,13 @@ function App() {
         {showRegisterForm ? (
           <div>
             <h2>Registration form here</h2>
-            <button onClick={() => setShowRegisterForm(false)}>Close Registration Form</button>
+            <button onClick={() => setShowRegisterForm(false)}>
+              Close Registration Form
+            </button>
           </div>
         ) : user ? (
           <>
             <p>Welcome, {user.email}</p>
-           
           </>
         ) : (
           <p>Please Login</p>
@@ -102,4 +120,3 @@ function App() {
 }
 
 export default App;
-
